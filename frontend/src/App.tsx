@@ -9,12 +9,20 @@ enum EventType {
 }
 
 function App() {
+
+  const [randomColor, setRandomColor] = useState(generateRandomColor());
+
+  function generateRandomColor() {
+    // Generate a random hexadecimal color code
+    return '#' + Math.floor(Math.random()*16777215).toString(16);
+  }
+
   const [count, setCount] = useState(1);
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<Array<string>>([]);
 
   const sendMessage = () => {
-    socket.emit("message", { message: `From connection ${socket.id} ${input}` });
+    socket.emit("message", { message: `${socket.id?.slice(0, 4)}... ${input}` });
     setInput("");
   }
 
@@ -40,13 +48,16 @@ function App() {
       <div className="text-3xl text-red-800">
         Connect User Count: {count}
       </div>
+      <div style={{ color: randomColor }} className="text-3xl">
+        Connected User : {socket.id?.slice(0, 4)}...
+      </div>
       <div className="pt-5">
         <input value={input} onChange={e => setInput(e.target.value)} className="bg-slate-200 rounded-xl p-2" placeholder='Enter message'/>
         <button className="p-2 px-4 border-gray-100 rounded-xl bg-blue-500 text-white" onClick={sendMessage}>Send</button>
       </div>
-
+      <br/>
       <div className="flex flex-col">
-        {reversedMessages.map(msg => <p>{msg}</p>)}
+        {reversedMessages.map(msg => <><p style={{ color: randomColor }}>{msg}</p> <br/></>)}
       </div>
     </div>
   );
