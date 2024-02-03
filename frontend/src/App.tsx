@@ -8,6 +8,13 @@ enum EventType {
   ConnectUserCount = "connectUserCount"
 }
 
+type ColoredMsg = {
+    author: string,
+    content:  string,
+    color: string,
+}
+
+
 function App() {
 
   const [randomColor, setRandomColor] = useState(generateRandomColor());
@@ -19,10 +26,17 @@ function App() {
 
   const [count, setCount] = useState(1);
   const [input, setInput] = useState("");
-  const [messages, setMessages] = useState<Array<string>>([]);
+  const [messages, setMessages] = useState<Array<ColoredMsg>>([]);
 
   const sendMessage = () => {
-    socket.emit("message", { message: `${socket.id?.slice(0, 4)}... ${input}` });
+
+  const coloredMessage = {
+    author: `${socket.id?.slice(0, 4)}`,
+    content:  `${input}`,
+    color: randomColor,
+  };
+
+    socket.emit("message", { message: coloredMessage });
     setInput("");
   }
 
@@ -57,7 +71,11 @@ function App() {
       </div>
       <br/>
       <div className="flex flex-col">
-        {reversedMessages.map(msg => <><p style={{ color: randomColor }}>{msg}</p> <br/></>)}
+        {reversedMessages.map(msg => <>
+          <p style={{color: msg.color}}>User {msg.author}:</p>
+          <p>{msg.content}</p>
+          <br/>
+          </>)}
       </div>
     </div>
   );
