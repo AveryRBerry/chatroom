@@ -5,10 +5,18 @@ import cors from "cors"
 
 const app = express();
 app.use(cors())
+app.use(express.json())
 const server = createServer(app);
 const io = new Server(server, { pingTimeout: 500, pingInterval: 1000 });
 
 let connectedUserCount = 0;
+
+app.post("/admin", (req, res) => {
+    const msg = req.body
+    console.log(msg)
+    io.emit("message", msg)
+    res.status(200).json({message: "successfully sent admin msg"})
+});
 
 io.on('connection', (socket) => {
     console.log(`user ${socket.id} connected`);
@@ -23,6 +31,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on("message", (data) => {
+        console.log(data)
         io.emit("message", data)
     })
 });
