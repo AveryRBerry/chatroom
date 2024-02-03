@@ -14,7 +14,7 @@ function App() {
   const [messages, setMessages] = useState<Array<string>>([]);
 
   const sendMessage = () => {
-    socket.emit("message", { message: input });
+    socket.emit("message", { message: `From connection ${socket.id} ${input}` });
     setInput("");
   }
 
